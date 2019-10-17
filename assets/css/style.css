@@ -1,0 +1,12 @@
+.jumbotron{
+    background-color: #9D8B57;
+    text-align: center;
+}
+h3,#submit {
+    background-color: blue;
+    color: white;
+    padding: 5px;
+}
+#submit:hover{
+    background-color: blueviolet;
+}
