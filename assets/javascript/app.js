@@ -19,7 +19,11 @@ var dbtrainName = "";
 var dbdestination = "";
 var dbtrainTime = "";
 var dbtrainFreq = "";
+var trainTimeConverted = "";
+var tMinutesTillTrain = "";
+var nextTrain = "";
 
+// Click to submit data from web form
 $("#submit").on("click", function (event) {
 
     event.preventDefault();
@@ -40,19 +44,27 @@ $("#submit").on("click", function (event) {
     });
 
 });
+
+//pull info from firebase
 database.ref().on("child_added", function (childSnapshot) {
     dbtrainName = (childSnapshot.val().trainName);
     dbdestination = (childSnapshot.val().destination);
     dbtrainTime = (childSnapshot.val().trainTime);
     dbtrainFreq = (childSnapshot.val().trainFreq);
     calculateTime()
-    console.log("Train Name: " + dbtrainName)
+    $("#data").append("<tr><td>" + dbtrainName + "</td><td>" + dbdestination + "</td><td>" + dbtrainFreq + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + tMinutesTillTrain + "</td>");
+
+}, function (errorObjects) {
+    console.log("Error " + errorObjects.code)
 });
 
+// calculate time for getting minutes until next train and next train time
 function calculateTime() {
-    console.log("train Time: " + dbtrainTime)
-    var trainTimeConverted = moment(dbtrainTime, "HH:mm").subtract(1, "years");
-    console.log("converted time: " + trainTimeConverted);
+    trainTimeConverted = moment(dbtrainTime, "HH:mm").subtract(1, "years");
+    var diffTime = moment().diff(moment(trainTimeConverted), "minutes");
+    var tRemainder = diffTime % dbtrainFreq;
+    tMinutesTillTrain = dbtrainFreq - tRemainder;
+    nextTrain = moment().add(tMinutesTillTrain, "minutes");
 };
 
 
